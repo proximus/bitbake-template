@@ -1,0 +1,98 @@
+#===============================================================================
+#
+#          FILE:  README
+#
+#         USAGE:  ---
+#
+#   DESCRIPTION:  A brief explanation and desciption on how BitBake is setup and
+#                 configured. Read this file before building a project.
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Samuel Gabrielsson (samuel.gabrielsson@gmail.com)
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  2014-12-01 09:00:00 CET
+#      REVISION:  ---
+#       CHANGES:  ---
+#
+#===============================================================================
+
+# BitBake pre configuration variables
+Prior to parsing configuration files, BitBake looks at the list of variables:
+
+BB_ENV_WHITELIST
+    Specifies the internal whitelist of variables to allow through from the
+    external environment into BitBake's datastore. If the value of this variable
+    is not specified (which is the default), the following list is used:
+
+    BBPATH
+        Used by BitBake to locate class (.bbclass) and configuration (.conf)
+        files. This variable is analogous to the PATH variable.
+    BB_PRESERVE_ENV
+        See description below
+    BB_ENV_WHITELIST
+        See description above
+    BB_ENV_EXTRAWHITE.
+        See description below
+
+BB_PRESERVE_ENV
+    Disables whitelisting and instead allows all variables through from the
+    external environment into BitBake's datastore.
+
+BB_ENV_EXTRAWHITE
+    Specifies an additional set of variables to allow through (whitelist) from
+    the external environment into BitBake's datastore. This list of variables
+    are on top of the internal list set in BB_ENV_WHITELIST.
+
+BITBAKE_UI
+    Used to specify the UI module to use when running BitBake. Using this
+    variable is equivalent to using the -u command-line option.
+
+# BitBake base configuration metadata
+The first thing BitBake does is parse base configuration metadata. The base
+configuration metadata is global and therefore affects all recipes and tasks
+that are executed. The configuration metadata consists of:
+
+    conf/bblayers.conf
+    conf/bitbake.conf
+
+The BBPATH variable is what tells BitBake where to look for those files.
+
+# BitBake configuration file bblayers.conf
+BitBake first searches the current working directory for an optional
+conf/bblayers.conf configuration file to determine what layers BitBake needs to
+recognize. This file is expected to contain a BBLAYERS variable that is a
+space-delimited list of 'layer' directories. If there is no bblayers.conf file,
+then it is assumed the user has set the BBPATH and BBFILES variables directly
+in the environment.
+
+# Bitbake configuration file bitbake.conf
+This is the first thing BitBake must find in order to build a target and is
+located using the BBPATH variable. The conf/bitbake.conf includes a number of
+configuration variables BitBake uses for metadata and recipe files. It may also
+include other configuration files using the include or require directives for
+modularity.
+
+# Classes
+After parsing configuration files, BitBake uses its rudimentary inheritance
+mechanism to inherit some standard classes. Class files are denoted by the
+.bbclass extension and contain information that is useful to share between
+metadata files. The BitBake source tree currently comes with one class metadata
+in classes/base.bbclass. The file is always included automatically for all
+recipes and classes. Other classes that are specified in the configuration using
+the INHERIT variable are also included. BitBake searches for class files in a
+classes subdirectory under the paths in BBPATH in the same way as configuration
+files. The class can contain definitions for standard basic tasks such as:
+
+    fetching
+    unpacking
+    configuring (empty by default)
+    compiling   (runs any Makefile present)
+    installing  (empty by default)
+    packaging   (empty by default)
+
+These tasks are often overridden or extended by other classes added during the
+project development process.
