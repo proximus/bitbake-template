@@ -20,7 +20,9 @@
 #
 #===============================================================================
 
+#===============================================================================
 # BitBake pre configuration variables
+#===============================================================================
 Prior to parsing configuration files, BitBake looks at the list of variables:
 
 BB_ENV_WHITELIST
@@ -51,7 +53,9 @@ BITBAKE_UI
     Used to specify the UI module to use when running BitBake. Using this
     variable is equivalent to using the -u command-line option.
 
+#===============================================================================
 # BitBake base configuration metadata
+#===============================================================================
 The first thing BitBake does is parse base configuration metadata. The base
 configuration metadata is global and therefore affects all recipes and tasks
 that are executed. The configuration metadata consists of:
@@ -61,7 +65,9 @@ that are executed. The configuration metadata consists of:
 
 The BBPATH variable is what tells BitBake where to look for those files.
 
+#===============================================================================
 # BitBake configuration file bblayers.conf
+#===============================================================================
 BitBake first searches the current working directory for an optional
 conf/bblayers.conf configuration file to determine what layers BitBake needs to
 recognize. This file is expected to contain a BBLAYERS variable that is a
@@ -69,14 +75,18 @@ space-delimited list of 'layer' directories. If there is no bblayers.conf file,
 then it is assumed the user has set the BBPATH and BBFILES variables directly
 in the environment.
 
+#===============================================================================
 # Bitbake configuration file bitbake.conf
+#===============================================================================
 This is the first thing BitBake must find in order to build a target and is
 located using the BBPATH variable. The conf/bitbake.conf includes a number of
 configuration variables BitBake uses for metadata and recipe files. It may also
 include other configuration files using the include or require directives for
 modularity.
 
+#===============================================================================
 # Classes
+#===============================================================================
 After parsing configuration files, BitBake uses its rudimentary inheritance
 mechanism to inherit some standard classes. Class files are denoted by the
 .bbclass extension and contain information that is useful to share between
@@ -96,3 +106,25 @@ files. The class can contain definitions for standard basic tasks such as:
 
 These tasks are often overridden or extended by other classes added during the
 project development process.
+
+#===============================================================================
+# Layers
+#===============================================================================
+Layers allow you to isolate different types of customizations from each other.
+Don't keep everything in one layer when working on a single project. The more
+modular you organize your metadata, the easier it is to cope with future
+changes. Split metadata into layers and allow layers to enhance or override
+other layers. The configuration metadata for layers consists of:
+
+    conf/layers.conf
+
+The layer.conf files are used to construct key variables such such as BBPATH and
+BBFILES for the layer.
+
+    BBPATH is used to search for configuration and class files under the
+    conf and classes layer directories.
+
+    BBFILES is used to locate both recipe and recipe append files (.bb and
+    .bbappend). Append files are applied in the order they are encountered in
+    BBFILES. For each file, a fresh copy of the base configuration is made, then
+    the recipe is parsed line by line.
